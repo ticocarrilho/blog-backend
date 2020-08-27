@@ -28,7 +28,10 @@ module.exports = {
       return res.status(400).json({ error: 'E-mail already in use' });
     }
     const user = await User.create({ name, email, password, isAdmin: false });
-    return res.json(user);
+    const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, {
+      expiresIn: 600,
+    });
+    return res.json({ token });
   },
   async update(req, res) {
     const { userId } = req.params;
