@@ -1,7 +1,7 @@
 const express = require('express');
-const UserController = require('./controllers/UserController');
-const PostController = require('./controllers/PostController');
-const CommentaryController = require('./controllers/CommentaryController');
+const UserController = require('./app/controllers/UserController');
+const PostController = require('./app/controllers/PostController');
+const CommentaryController = require('./app/controllers/CommentaryController');
 const { auth, isAdmin } = require('./middleware/auth');
 
 const routes = express.Router();
