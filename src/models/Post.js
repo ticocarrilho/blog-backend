@@ -12,11 +12,7 @@ class Post extends Model {
   }
   static associate(models) {
     this.belongsTo(models.User, { foreignKey: 'user_id', as: 'users' });
-    this.belongsToMany(models.User, {
-      foreignKey: 'post_id',
-      through: models.Commentaries,
-      as: 'Commentary',
-    });
+    this.hasMany(models.Commentary, { foreignKey: 'post_id', as: 'post_commentary' });
   }
 }
 module.exports = Post;

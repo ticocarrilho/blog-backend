@@ -14,32 +14,46 @@ module.exports = {
   },
   async show(req, res) {
     const { userId } = req.params;
-    const { name, email, isAdmin } = await User.findByPk(userId);
+    const user = await User.findByPk(userId);
+    if (user) {
+      return res.status(404).json({ message: 'Post not found.' });
+    }
+    const { name, email, isAdmin } = user;
     return res.json({ name, email, isAdmin });
   },
   async store(req, res) {
     const { name, email, password } = req.body;
-    const userExists = await User.findOne({ where: { email } });
-    if (userExists) {
+    const emailInUse = await User.findOne({ where: { email } });
+    if (emailInUse) {
       return res.status(400).json({ error: 'E-mail already in use' });
     }
     const user = await User.create({ name, email, password, isAdmin: false });
     return res.json(user);
   },
   async update(req, res) {
-    //!TODO
     const { userId } = req.params;
     const { name, email, password, isAdmin } = req.body;
-    const user = await User.update(
-      { name, email, password, isAdmin },
-      { where: { id: userId } }
-    );
-    return res.json(user);
+    const user = await User.findOne({ where: { id: userId } });
+    user
+      .update({ name, email, password, isAdmin })
+      .then(() => {
+        return res.status(201).json({ message: 'User edited successfully.' });
+      })
+      .catch(() => {
+        return res.status(400).json({ error: 'Unable to edit user.' });
+      });
   },
   async delete(req, res) {
-    //!!TODO
     const { userId } = req.params;
-    const user = await User.destroy({ where: { id: userId } });
+    const user = await User.findOne({ where: { id: userId } });
+    user
+      .destroy()
+      .then(() => {
+        return res.json({ message: 'User deleted successfully.' });
+      })
+      .catch(() => {
+        return res.status(400).json({ error: 'Unable to delete user' });
+      });
     return res.json(user);
   },
   async login(req, res) {

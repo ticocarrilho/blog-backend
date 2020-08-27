@@ -18,11 +18,7 @@ class User extends Model {
   }
   static associate(models) {
     this.hasMany(models.Post, { foreignKey: 'user_id', as: 'users' });
-    this.belongsToMany(models.Post, {
-      foreignKey: 'user_id',
-      through: models.Commentaries,
-      as: 'commentPost',
-    });
+    this.hasMany(models.Commentary, { foreignKey: 'user_id', as: 'user_commentary' });
   }
 }
 module.exports = User;

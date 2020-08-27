@@ -19,4 +19,9 @@ routes.post('/post', auth, isAdmin, PostController.store);
 routes.patch('/post/:postId', auth, isAdmin, PostController.update);
 routes.delete('/post/:postId', auth, isAdmin, PostController.delete);
 
+routes.post('/post/:postId/comment', auth, CommentaryController.store);
+routes.get('/post/:postId/comment', CommentaryController.index);
+routes.patch('/post/comment/:commentId', auth, CommentaryController.update);
+routes.delete('/post/comment/:commentId', auth, CommentaryController.delete);
+
 module.exports = routes;
