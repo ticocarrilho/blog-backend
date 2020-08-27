@@ -1,5 +1,5 @@
-const Post = require('../models/Post');
-const Commentary = require('../models/Commentary');
+const { Post } = require('../models');
+const { Commentary } = require('../models');
 module.exports = {
   async index(req, res) {
     const { postId } = req.params;
@@ -20,7 +20,7 @@ module.exports = {
     const { content } = req.body;
     const userId = req.user;
     const { postId } = req.params;
-    console.log(userId)
+    console.log(userId);
     const commentary = await Commentary.create({
       content,
       user_id: userId,
@@ -44,7 +44,9 @@ module.exports = {
     commentary
       .update({ content })
       .then(() => {
-        return res.status(201).json({ message: 'Commentary edited successfully.' });
+        return res
+          .status(201)
+          .json({ message: 'Commentary edited successfully.' });
       })
       .catch(() => {
         return res.status(400).json({ error: 'Unable to edit commentary.' });

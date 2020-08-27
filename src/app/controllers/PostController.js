@@ -1,5 +1,5 @@
-const User = require('../models/User');
-const Post = require('../models/Post');
+const { User } = require('../models');
+const { Post } = require('../models');
 module.exports = {
   async index(req, res) {
     const posts = await Post.findAll();
