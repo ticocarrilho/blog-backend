@@ -1,4 +1,5 @@
 const { User } = require('../models');
+const jwt = require('jsonwebtoken');
 
 module.exports = {
   async index(req, res) {
@@ -13,11 +14,11 @@ module.exports = {
   async show(req, res) {
     const { userId } = req.params;
     const user = await User.findByPk(userId);
-    if (user) {
-      return res.status(404).json({ message: 'Post not found.' });
+    if (!user) {
+      return res.status(404).json({ message: 'User not found.' });
     }
-    const { name, email, isAdmin } = user;
-    return res.json({ name, email, isAdmin });
+    const { id, name, email, isAdmin } = user;
+    return res.json({ id, name, email, isAdmin });
   },
   async store(req, res) {
     const { name, email, password } = req.body;
@@ -29,40 +30,36 @@ module.exports = {
     const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, {
       expiresIn: 600,
     });
-    return res.json({ token });
+    return res.status(201).json({ token });
   },
   async update(req, res) {
     const { userId } = req.params;
     const { name, email, password, isAdmin } = req.body;
     const user = await User.findOne({ where: { id: userId } });
-    user
-      .update({ name, email, password, isAdmin })
-      .then(() => {
-        return res.status(201).json({ message: 'User edited successfully.' });
-      })
-      .catch(() => {
-        return res.status(400).json({ error: 'Unable to edit user.' });
-      });
+    try {
+      await user.update({ name, email, password, isAdmin });
+      return res.json({ message: 'User edited successfully.' });
+    } catch (error) {
+      return res.status(400).json({ error: 'Unable to edit user.' });
+    }
   },
   async delete(req, res) {
     const { userId } = req.params;
     const user = await User.findOne({ where: { id: userId } });
-    user
-      .destroy()
-      .then(() => {
-        return res.json({ message: 'User deleted successfully.' });
-      })
-      .catch(() => {
-        return res.status(400).json({ error: 'Unable to delete user' });
-      });
-    return res.json(user);
+    try {
+      await user.destroy();
+
+      return res.json({ message: 'User deleted successfully.' });
+    } catch (error) {
+      return res.status(400).json({ error: 'Unable to delete user' });
+    }
   },
   async login(req, res) {
     const { email, password } = req.body;
     const user = await User.findOne({ where: { email } });
 
     if (!user || !(await user.checkPassword(password))) {
-      return res.status(400).json({ error: 'Wrong e-mail or password.' });
+      return res.status(401).json({ error: 'Wrong e-mail or password.' });
     }
 
     return res.json({ token: user.generateToken() });

@@ -3,7 +3,7 @@ const { Commentary } = require('../models');
 module.exports = {
   async index(req, res) {
     const { postId } = req.params;
-    const comments = await Post.findByPk(postId, {
+    const { post_commentary } = await Post.findByPk(postId, {
       include: [
         {
           association: 'post_commentary',
@@ -14,13 +14,19 @@ module.exports = {
         },
       ],
     });
-    return res.json(comments);
+    return res.json(post_commentary);
   },
   async store(req, res) {
+    const { postId } = req.params;
     const { content } = req.body;
     const userId = req.user;
-    const { postId } = req.params;
-    console.log(userId);
+
+    const post = await Post.findByPk(postId);
+
+    if (!post) {
+      return res.status(404).json({ error: 'Post not found.' });
+    }
+
     const commentary = await Commentary.create({
       content,
       user_id: userId,
@@ -33,20 +39,20 @@ module.exports = {
     const userId = req.user;
     const { commentId } = req.params;
 
-    const commentary = await Commentary.findOne({
-      where: { id: commentId, user_id: userId },
-    });
+    const commentary = await Commentary.findByPk(commentId);
 
     if (!commentary) {
       return res.status(404).json({ error: 'Commentary not found.' });
     }
 
+    if (commentary.user_id !== userId) {
+      return res.status(401).json({ error: 'Unauthorized!' });
+    }
+
     commentary
       .update({ content })
       .then(() => {
-        return res
-          .status(201)
-          .json({ message: 'Commentary edited successfully.' });
+        return res.json({ message: 'Commentary edited successfully.' });
       })
       .catch(() => {
         return res.status(400).json({ error: 'Unable to edit commentary.' });
@@ -56,12 +62,14 @@ module.exports = {
     const userId = req.user;
     const { commentId } = req.params;
 
-    const commentary = await Commentary.findOne({
-      where: { id: commentId, user_id: userId },
-    });
+    const commentary = await Commentary.findByPk(commentId);
 
     if (!commentary) {
       return res.status(404).json({ error: 'Commentary not found.' });
+    }
+
+    if (commentary.user_id !== userId) {
+      return res.status(401).json({ error: 'Unauthorized!' });
     }
 
     commentary
