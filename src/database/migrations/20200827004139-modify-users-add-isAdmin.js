@@ -6,7 +6,6 @@ module.exports = {
       'is_admin',
       {
         type: Sequelize.BOOLEAN,
-        allowNull: false,
       },
     );
   },

@@ -1,4 +1,5 @@
 const { User } = require('../models');
+const jwt = require('jsonwebtoken');
 
 module.exports = {
   async index(req, res) {
@@ -13,11 +14,11 @@ module.exports = {
   async show(req, res) {
     const { userId } = req.params;
     const user = await User.findByPk(userId);
-    if (user) {
-      return res.status(404).json({ message: 'Post not found.' });
+    if (!user) {
+      return res.status(404).json({ message: 'User not found.' });
     }
-    const { name, email, isAdmin } = user;
-    return res.json({ name, email, isAdmin });
+    const { id, name, email, isAdmin } = user;
+    return res.json({ id, name, email, isAdmin });
   },
   async store(req, res) {
     const { name, email, password } = req.body;
@@ -55,14 +56,13 @@ module.exports = {
       .catch(() => {
         return res.status(400).json({ error: 'Unable to delete user' });
       });
-    return res.json(user);
   },
   async login(req, res) {
     const { email, password } = req.body;
     const user = await User.findOne({ where: { email } });
 
     if (!user || !(await user.checkPassword(password))) {
-      return res.status(400).json({ error: 'Wrong e-mail or password.' });
+      return res.status(401).json({ error: 'Wrong e-mail or password.' });
     }
 
     return res.json({ token: user.generateToken() });
