@@ -30,32 +30,29 @@ module.exports = {
     const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, {
       expiresIn: 600,
     });
-    return res.json({ token });
+    return res.status(201).json({ token });
   },
   async update(req, res) {
     const { userId } = req.params;
     const { name, email, password, isAdmin } = req.body;
     const user = await User.findOne({ where: { id: userId } });
-    user
-      .update({ name, email, password, isAdmin })
-      .then(() => {
-        return res.status(201).json({ message: 'User edited successfully.' });
-      })
-      .catch(() => {
-        return res.status(400).json({ error: 'Unable to edit user.' });
-      });
+    try {
+      await user.update({ name, email, password, isAdmin });
+      return res.json({ message: 'User edited successfully.' });
+    } catch (error) {
+      return res.status(400).json({ error: 'Unable to edit user.' });
+    }
   },
   async delete(req, res) {
     const { userId } = req.params;
     const user = await User.findOne({ where: { id: userId } });
-    user
-      .destroy()
-      .then(() => {
-        return res.json({ message: 'User deleted successfully.' });
-      })
-      .catch(() => {
-        return res.status(400).json({ error: 'Unable to delete user' });
-      });
+    try {
+      await user.destroy();
+
+      return res.json({ message: 'User deleted successfully.' });
+    } catch (error) {
+      return res.status(400).json({ error: 'Unable to delete user' });
+    }
   },
   async login(req, res) {
     const { email, password } = req.body;
