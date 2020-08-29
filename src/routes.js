@@ -24,4 +24,8 @@ routes.get('/post/:postId/comment', CommentaryController.index);
 routes.patch('/post/comment/:commentId', auth, CommentaryController.update);
 routes.delete('/post/comment/:commentId', auth, CommentaryController.delete);
 
+routes.get('/csrf-token', (req, res) => {
+  res.json({ csrfToken: req.csrfToken() });
+});
+
 module.exports = routes;
