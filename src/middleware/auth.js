@@ -3,14 +3,12 @@ const { User } = require('../app/models');
 
 module.exports = {
   async auth(req, res, next) {
-    const authHeader = req.headers.authorization;
-    if (!authHeader) {
+    const token = req.signedCookies.token;
+    if (!token) {
       return res.status(401).json({
         error: 'Token not provided!',
       });
     }
-
-    const [, token] = authHeader.split(' ');
     let id;
     jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
       if (err) {

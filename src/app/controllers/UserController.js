@@ -30,6 +30,7 @@ module.exports = {
     const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, {
       expiresIn: 600,
     });
+    res.cookie('token', token, { httpOnly: true, signed: true });
     return res.status(201).json({ token });
   },
   async update(req, res) {
@@ -61,7 +62,11 @@ module.exports = {
     if (!user || !(await user.checkPassword(password))) {
       return res.status(401).json({ error: 'Wrong e-mail or password.' });
     }
-
-    return res.json({ token: user.generateToken() });
+    const token = user.generateToken();
+    res.cookie('token', token, {
+      httpOnly: true,
+      signed: true,
+    });
+    return res.json({ token });
   },
 };
