@@ -10,7 +10,7 @@ let csrf, cookies;
 describe('GET /post', () => {
   beforeEach(async () => {
     await truncate();
-    const getCsrf = await request(app).get('/csrf-token');
+    const getCsrf = await request(app).get('/api/csrf-token');
     csrf = getCsrf.body.csrfToken;
     cookies = getCsrf.headers['set-cookie'];
   });
@@ -20,7 +20,7 @@ describe('GET /post', () => {
       user_id: user.id,
     });
     const response = await request(app)
-      .get(`/post/${post.id}`)
+      .get(`/api/post/${post.id}`)
       .set({ 'X-CSRF-Token': csrf, Cookie: cookies });
     expect(response.status).toBe(200);
   });
@@ -31,7 +31,7 @@ describe('GET /post', () => {
       user_id: user.id,
     });
     const response = await request(app)
-      .get(`/post`)
+      .get(`/api/post`)
       .set({ 'X-CSRF-Token': csrf, Cookie: cookies });
 
     expect(response.body).toHaveLength(10);
@@ -43,7 +43,7 @@ describe('GET /post', () => {
       user_id: user.id,
     });
     const response = await request(app)
-      .get(`/post/${post.id + 10}`)
+      .get(`/api/post/${post.id + 10}`)
       .set({ 'X-CSRF-Token': csrf, Cookie: cookies });
 
     expect(response.status).toBe(404);
@@ -53,7 +53,7 @@ describe('GET /post', () => {
 describe('POST /post', () => {
   beforeEach(async () => {
     await truncate();
-    const getCsrf = await request(app).get('/csrf-token');
+    const getCsrf = await request(app).get('/api/csrf-token');
     csrf = getCsrf.body.csrfToken;
     cookies = getCsrf.headers['set-cookie'];
   });
@@ -66,7 +66,7 @@ describe('POST /post', () => {
     let cookie = await getAuthCookie(user.email, 'admin', csrf, cookies);
 
     const response = await request(app)
-      .post('/post')
+      .post('/api/post')
       .send({ title: 'test', content: 'testcontent' })
       .set({ 'X-CSRF-Token': csrf, Cookie: cookie });
 
@@ -80,7 +80,7 @@ describe('POST /post', () => {
     let cookie = await getAuthCookie(user.email, 'admin', csrf, cookies);
 
     const response = await request(app)
-      .post('/post')
+      .post('/api/post')
       .send({ title: 'test', content: 'testcontent' })
       .set({ 'X-CSRF-Token': csrf, Cookie: cookie });
 
@@ -91,7 +91,7 @@ describe('POST /post', () => {
 describe('PATCH /post', () => {
   beforeEach(async () => {
     await truncate();
-    const getCsrf = await request(app).get('/csrf-token');
+    const getCsrf = await request(app).get('/api/csrf-token');
     csrf = getCsrf.body.csrfToken;
     cookies = getCsrf.headers['set-cookie'];
   });
@@ -106,7 +106,7 @@ describe('PATCH /post', () => {
     let cookie = await getAuthCookie(user.email, 'admin', csrf, cookies);
 
     const response = await request(app)
-      .patch(`/post/${post.id}`)
+      .patch(`/api/post/${post.id}`)
       .send({ title: 'New title' })
       .set({ 'X-CSRF-Token': csrf, Cookie: cookie });
 
@@ -123,7 +123,7 @@ describe('PATCH /post', () => {
     let cookie = await getAuthCookie(user.email, 'admin', csrf, cookies);
 
     const response = await request(app)
-      .patch(`/post/${post.id + 99}`)
+      .patch(`/api/post/${post.id + 99}`)
       .send({ title: 'test', content: 'testcontent' })
       .set({ 'X-CSRF-Token': csrf, Cookie: cookie });
 
@@ -134,7 +134,7 @@ describe('PATCH /post', () => {
 describe('DELETE /post', () => {
   beforeEach(async () => {
     await truncate();
-    const getCsrf = await request(app).get('/csrf-token');
+    const getCsrf = await request(app).get('/api/csrf-token');
     csrf = getCsrf.body.csrfToken;
     cookies = getCsrf.headers['set-cookie'];
   });
@@ -149,7 +149,7 @@ describe('DELETE /post', () => {
     let cookie = await getAuthCookie(user.email, 'admin', csrf, cookies);
 
     const response = await request(app)
-      .delete(`/post/${post.id}`)
+      .delete(`/api/post/${post.id}`)
       .set({ 'X-CSRF-Token': csrf, Cookie: cookie });
 
     expect(response.status).toBe(200);
@@ -165,7 +165,7 @@ describe('DELETE /post', () => {
     let cookie = await getAuthCookie(user.email, 'admin', csrf, cookies);
 
     const response = await request(app)
-      .patch(`/post/${post.id + 99}`)
+      .patch(`/api/post/${post.id + 99}`)
       .set({ 'X-CSRF-Token': csrf, Cookie: cookie });
     expect(response.status).toBe(404);
   });

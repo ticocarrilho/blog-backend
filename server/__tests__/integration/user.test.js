@@ -10,7 +10,7 @@ let csrf, cookies;
 describe('Authentication /users', () => {
   beforeEach(async () => {
     await truncate();
-    const getCsrf = await request(app).get('/csrf-token');
+    const getCsrf = await request(app).get('/api/csrf-token');
     csrf = getCsrf.body.csrfToken;
     cookies = getCsrf.headers['set-cookie'];
   });
@@ -20,7 +20,7 @@ describe('Authentication /users', () => {
     });
 
     const response = await request(app)
-      .post('/user/login')
+      .post('/api/user/login')
       .set({ 'X-CSRF-Token': csrf, Cookie: cookies })
       .send({
         email: user.email,
@@ -36,7 +36,7 @@ describe('Authentication /users', () => {
     });
 
     const response = await request(app)
-      .post('/user/login')
+      .post('/api/user/login')
       .set({ 'X-CSRF-Token': csrf, Cookie: cookies })
       .send({
         email: user.email,
@@ -52,7 +52,7 @@ describe('Authentication /users', () => {
     });
 
     const response = await request(app)
-      .post('/user/login')
+      .post('/api/user/login')
       .set({ 'X-CSRF-Token': csrf, Cookie: cookies })
       .send({
         email: user.email,
@@ -66,13 +66,13 @@ describe('Authentication /users', () => {
 describe('Register /users', () => {
   beforeEach(async () => {
     await truncate();
-    const getCsrf = await request(app).get('/csrf-token');
+    const getCsrf = await request(app).get('/api/csrf-token');
     csrf = getCsrf.body.csrfToken;
     cookies = getCsrf.headers['set-cookie'];
   });
   it('should be able to create an account and return a cookie token', async () => {
     const response = await request(app)
-      .post('/user')
+      .post('/api/user')
       .set({ 'X-CSRF-Token': csrf, Cookie: cookies })
       .send({
         name: 'test test',
@@ -88,7 +88,7 @@ describe('Register /users', () => {
       email: 'test@email.com',
     });
     const response = await request(app)
-      .post('/user')
+      .post('/api/user')
       .set({ 'X-CSRF-Token': csrf, Cookie: cookies })
       .send({
         name: 'test test',
@@ -105,7 +105,7 @@ describe('Register /users', () => {
     });
 
     const response = await request(app)
-      .post('/user/login')
+      .post('/api/user/login')
       .set({ 'X-CSRF-Token': csrf, Cookie: cookies })
       .send({
         email: user.email,
@@ -119,7 +119,7 @@ describe('Register /users', () => {
 describe('GET /users', () => {
   beforeEach(async () => {
     await truncate();
-    const getCsrf = await request(app).get('/csrf-token');
+    const getCsrf = await request(app).get('/api/csrf-token');
     csrf = getCsrf.body.csrfToken;
     cookies = getCsrf.headers['set-cookie'];
   });
@@ -127,7 +127,7 @@ describe('GET /users', () => {
     await factory.createMany('User', 10);
 
     const response = await request(app)
-      .get(`/user`)
+      .get(`/api/user`)
       .set({ 'X-CSRF-Token': csrf, Cookie: cookies });
 
     expect(response.body).toHaveLength(10);
@@ -136,7 +136,7 @@ describe('GET /users', () => {
     const user = await factory.create('User');
 
     const response = await request(app)
-      .get(`/user/${user.id}`)
+      .get(`/api/user/${user.id}`)
       .set({ 'X-CSRF-Token': csrf, Cookie: cookies });
 
     expect(response.body.id).toBe(user.id);
@@ -145,7 +145,7 @@ describe('GET /users', () => {
     const user = await factory.create('User');
 
     const response = await request(app)
-      .get(`/user/${user.id + 20}`)
+      .get(`/api/user/${user.id + 20}`)
       .set({ 'X-CSRF-Token': csrf, Cookie: cookies });
 
     expect(response.status).toBe(404);
@@ -155,7 +155,7 @@ describe('GET /users', () => {
 describe('DELETE /users', () => {
   beforeEach(async () => {
     await truncate();
-    const getCsrf = await request(app).get('/csrf-token');
+    const getCsrf = await request(app).get('/api/csrf-token');
     csrf = getCsrf.body.csrfToken;
     cookies = getCsrf.headers['set-cookie'];
   });
@@ -168,7 +168,7 @@ describe('DELETE /users', () => {
 
     let cookie = await getAuthCookie(userAdmin.email, 'admin', csrf, cookies);
 
-    const response = await request(app).delete(`/user/${user.id}`).set({
+    const response = await request(app).delete(`/api/user/${user.id}`).set({
       'X-CSRF-Token': csrf,
       Cookie: cookie,
     });
@@ -185,7 +185,7 @@ describe('DELETE /users', () => {
     let cookie = await getAuthCookie(userAdmin.email, 'admin', csrf, cookies);
 
     const response = await request(app)
-      .delete(`/user/${userAdmin.id + 20}`)
+      .delete(`/api/user/${userAdmin.id + 20}`)
       .set({
         'X-CSRF-Token': csrf,
         Cookie: cookie,
@@ -201,7 +201,7 @@ describe('DELETE /users', () => {
 
     let cookie = await getAuthCookie(userA.email, 'test', csrf, cookies);
 
-    const response = await request(app).delete(`/user/${userB.id}`).set({
+    const response = await request(app).delete(`/api/user/${userB.id}`).set({
       'X-CSRF-Token': csrf,
       Cookie: cookie,
     });
@@ -213,7 +213,7 @@ describe('DELETE /users', () => {
 describe('UPDATE /users', () => {
   beforeEach(async () => {
     await truncate();
-    const getCsrf = await request(app).get('/csrf-token');
+    const getCsrf = await request(app).get('/api/csrf-token');
     csrf = getCsrf.body.csrfToken;
     cookies = getCsrf.headers['set-cookie'];
   });
@@ -226,7 +226,7 @@ describe('UPDATE /users', () => {
     let cookie = await getAuthCookie(user.email, 'admin', csrf, cookies);
 
     const response = await request(app)
-      .patch(`/user/${user.id}`)
+      .patch(`/api/user/${user.id}`)
       .send({
         email: 'new@email.com',
       })
@@ -247,7 +247,7 @@ describe('UPDATE /users', () => {
     let cookie = await getAuthCookie(user.email, 'admin', csrf, cookies);
 
     const response = await request(app)
-      .patch(`/user/${user.id + 20}`)
+      .patch(`/api/user/${user.id + 20}`)
       .send({
         email: 'new@email.com',
       })

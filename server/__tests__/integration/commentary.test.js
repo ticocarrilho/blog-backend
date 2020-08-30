@@ -10,7 +10,7 @@ let csrf, cookies;
 describe('POST /post/:postId/comment', () => {
   beforeEach(async () => {
     await truncate();
-    const getCsrf = await request(app).get('/csrf-token');
+    const getCsrf = await request(app).get('/api/csrf-token');
     csrf = getCsrf.body.csrfToken;
     cookies = getCsrf.headers['set-cookie'];
   });
@@ -25,7 +25,7 @@ describe('POST /post/:postId/comment', () => {
     let cookie = await getAuthCookie(user.email, 'test', csrf, cookies);
 
     const response = await request(app)
-      .post(`/post/${post.id}/comment`)
+      .post(`/api/post/${post.id}/comment`)
       .send({
         content: 'commentary',
       })
@@ -43,7 +43,7 @@ describe('POST /post/:postId/comment', () => {
     let cookie = await getAuthCookie(user.email, 'test', csrf, cookies);
 
     const response = await request(app)
-      .post(`/post/${post.id + 99}/comment`)
+      .post(`/api/post/${post.id + 99}/comment`)
       .send({
         content: 'commentary',
       })
@@ -56,7 +56,7 @@ describe('POST /post/:postId/comment', () => {
 describe('GET /post/:postId/comment', () => {
   beforeEach(async () => {
     await truncate();
-    const getCsrf = await request(app).get('/csrf-token');
+    const getCsrf = await request(app).get('/api/csrf-token');
     csrf = getCsrf.body.csrfToken;
     cookies = getCsrf.headers['set-cookie'];
   });
@@ -72,7 +72,7 @@ describe('GET /post/:postId/comment', () => {
     });
 
     const response = await request(app)
-      .get(`/post/${post.id}/comment`)
+      .get(`/api/post/${post.id}/comment`)
       .set({ 'X-CSRF-Token': csrf, Cookie: cookies });
     expect(response.body).toHaveLength(10);
   });
@@ -81,7 +81,7 @@ describe('GET /post/:postId/comment', () => {
 describe('PATCH /post/comment/:commentId', () => {
   beforeEach(async () => {
     await truncate();
-    const getCsrf = await request(app).get('/csrf-token');
+    const getCsrf = await request(app).get('/api/csrf-token');
     csrf = getCsrf.body.csrfToken;
     cookies = getCsrf.headers['set-cookie'];
   });
@@ -100,7 +100,7 @@ describe('PATCH /post/comment/:commentId', () => {
     let cookie = await getAuthCookie(user.email, 'test', csrf, cookies);
 
     const response = await request(app)
-      .patch(`/post/comment/${commentary.id}`)
+      .patch(`/api/post/comment/${commentary.id}`)
       .send({ content: 'New Content' })
       .set({ 'X-CSRF-Token': csrf, Cookie: cookie });
 
@@ -124,7 +124,7 @@ describe('PATCH /post/comment/:commentId', () => {
     let cookie = await getAuthCookie(userB.email, 'test', csrf, cookies);
 
     const response = await request(app)
-      .patch(`/post/comment/${commentary.id}`)
+      .patch(`/api/post/comment/${commentary.id}`)
       .send({ content: 'New Content' })
       .set({ 'X-CSRF-Token': csrf, Cookie: cookie });
 
@@ -147,7 +147,7 @@ describe('PATCH /post/comment/:commentId', () => {
     let cookie = await getAuthCookie(user.email, 'test', csrf, cookies);
 
     const response = await request(app)
-      .patch(`/post/comment/${commentary.id + 99}`)
+      .patch(`/api/post/comment/${commentary.id + 99}`)
       .send({ content: 'New Content' })
       .set({ 'X-CSRF-Token': csrf, Cookie: cookie });
 
@@ -158,7 +158,7 @@ describe('PATCH /post/comment/:commentId', () => {
 describe('DELETE /post/comment/:commentId', () => {
   beforeEach(async () => {
     await truncate();
-    const getCsrf = await request(app).get('/csrf-token');
+    const getCsrf = await request(app).get('/api/csrf-token');
     csrf = getCsrf.body.csrfToken;
     cookies = getCsrf.headers['set-cookie'];
   });
@@ -178,7 +178,7 @@ describe('DELETE /post/comment/:commentId', () => {
     let cookie = await getAuthCookie(user.email, 'test', csrf, cookies);
 
     const response = await request(app)
-      .delete(`/post/comment/${commentary.id}`)
+      .delete(`/api/post/comment/${commentary.id}`)
       .set({ 'X-CSRF-Token': csrf, Cookie: cookie });
 
     expect(response.status).toBe(200);
@@ -202,7 +202,7 @@ describe('DELETE /post/comment/:commentId', () => {
     let cookie = await getAuthCookie(userB.email, 'test', csrf, cookies);
 
     const response = await request(app)
-      .delete(`/post/comment/${commentary.id}`)
+      .delete(`/api/post/comment/${commentary.id}`)
       .set({ 'X-CSRF-Token': csrf, Cookie: cookie });
 
     expect(response.status).toBe(401);
@@ -225,7 +225,7 @@ describe('DELETE /post/comment/:commentId', () => {
     let cookie = await getAuthCookie(user.email, 'test', csrf, cookies);
 
     const response = await request(app)
-      .delete(`/post/comment/${commentary.id + 99}`)
+      .delete(`/api/post/comment/${commentary.id + 99}`)
       .set({ 'X-CSRF-Token': csrf, Cookie: cookie });
 
     expect(response.status).toBe(404);

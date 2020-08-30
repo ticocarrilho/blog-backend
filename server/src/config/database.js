@@ -16,7 +16,7 @@ module.exports = {
     },
   },
   test: {
-    storage: './__tests__/database.sqlite',
+    storage: './server/__tests__/database.sqlite',
     dialect: 'sqlite',
     logging: false,
     define: {
