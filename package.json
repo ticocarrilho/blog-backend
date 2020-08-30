@@ -5,8 +5,8 @@
   "license": "MIT",
   "scripts": {
     "prestart": "sequelize db:migrate",
-    "start": "node src/server.js",
-    "dev": "nodemon src/server.js --ignore __tests__",
+    "start": "node server",
+    "dev": "nodemon server --ignore server/__tests__",
     "pretest": "NODE_ENV=test sequelize db:migrate",
     "test": "NODE_ENV=test npm-run-all run-test run-after-test --continue-on-error",
     "run-test": "NODE_ENV=test jest --runInBand",
