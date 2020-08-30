@@ -61,7 +61,7 @@ function Login() {
 
   const teste = async () => {
     try {
-      const response = await axios.get('/user');
+      const response = await api.get('/user');
       console.log(response);
     } catch (error) {
       setError('wrongEmailOrPwd', {
