@@ -7,7 +7,7 @@
     "start": "node src/server.js",
     "dev": "nodemon src/server.js --ignore __tests__",
     "pretest": "NODE_ENV=test sequelize db:migrate",
-    "test": "npm-run-all run-test run-after-test --continue-on-error",
+    "test": "NODE_ENV=test npm-run-all run-test run-after-test --continue-on-error",
     "run-test": "NODE_ENV=test jest --runInBand",
     "run-after-test": "NODE_ENV=test sequelize db:migrate:undo:all",
     "posttest": "NODE_ENV=test sequelize db:migrate:undo:all"

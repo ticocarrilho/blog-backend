@@ -4,23 +4,12 @@ const fs = require('fs');
 const path = require('path');
 const Sequelize = require('sequelize');
 const basename = path.basename(__filename);
-const config = require('../../config/database');
+const env = process.env.NODE_ENV || 'development';
+const config = require('../../config/database')[env];
 const db = {};
 
-let sequelize
 
-if(process.env.NODE_ENV==='test'){
-  sequelize = new Sequelize(
-  process.env.DB_NAME,
-  process.env.DB_USER,
-  process.env.DB_PASS, 
-  config);
-}
-else {
-  sequelize = new Sequelize(process.env.DATABASE_URL, config);
-}
-
-
+const sequelize = new Sequelize(config)
 
 fs.readdirSync(__dirname)
   .filter((file) => {
