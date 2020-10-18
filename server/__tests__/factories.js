@@ -1,13 +1,9 @@
 const faker = require('faker');
 const { factory } = require('factory-girl');
 const { User, Post, Commentary } = require('../src/app/models');
+const userInfo = require('./userInfo');
 
-factory.define('User', User, {
-  name: faker.name.findName(),
-  email: faker.internet.email(),
-  password: faker.internet.password(),
-  isAdmin: false,
-});
+factory.define('User', User, userInfo);
 
 factory.define('Post', Post, {
   title: faker.random.words(),

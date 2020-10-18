@@ -10,27 +10,27 @@ describe('User', () => {
   });
   it('should encrypt the user password', async () => {
     const user = await factory.create('User', {
-      password: 'test',
+      password: 'testtest',
     });
 
-    const compareHash = await bcrypt.compare('test', user.password);
+    const compareHash = await bcrypt.compare('testtest', user.password);
 
     expect(compareHash).toBe(true);
   });
 
   it('should return true with the right password', async () => {
     const user = await factory.create('User', {
-      password: 'test',
+      password: 'testtest',
     });
 
-    const comparePassword = await user.checkPassword('test');
+    const comparePassword = await user.checkPassword('testtest');
 
     expect(comparePassword).toBe(true);
   });
 
   it('should return false with the wrong password', async () => {
     const user = await factory.create('User', {
-      password: 'test',
+      password: 'testtest',
     });
 
     const comparePassword = await user.checkPassword('wrong');
@@ -40,7 +40,7 @@ describe('User', () => {
 
   it('should generate a valid jwt token with the user id', async () => {
     const user = await factory.create('User', {
-      password: 'test',
+      password: 'testtest',
     });
 
     const token = await user.generateToken();

@@ -21,64 +21,62 @@ module.exports = {
     const { content } = req.body;
     const userId = req.user;
 
-    const post = await Post.findByPk(postId);
+    try {
+      const post = await Post.findByPk(postId);
 
-    if (!post) {
-      return res.status(404).json({ error: 'Post not found.' });
+      if (!post) {
+        return res.status(404).json({ error: 'Post not found.' });
+      }
+
+      const commentary = await Commentary.create({
+        content,
+        user_id: userId,
+        post_id: postId,
+      });
+      return res.status(201).json(commentary);
+    } catch (error) {
+      return res.status(500).json({ message: 'Server error.' });
     }
-
-    const commentary = await Commentary.create({
-      content,
-      user_id: userId,
-      post_id: postId,
-    });
-    return res.status(201).json(commentary);
   },
   async update(req, res) {
     const { content } = req.body;
     const userId = req.user;
     const { commentId } = req.params;
+    try {
+      const commentary = await Commentary.findByPk(commentId);
 
-    const commentary = await Commentary.findByPk(commentId);
+      if (!commentary) {
+        return res.status(404).json({ error: 'Commentary not found.' });
+      }
 
-    if (!commentary) {
-      return res.status(404).json({ error: 'Commentary not found.' });
+      if (commentary.user_id !== userId) {
+        return res.status(401).json({ error: 'Unauthorized!' });
+      }
+
+      await commentary.update({ content });
+      return res.json({ message: 'Commentary edited successfully.' });
+    } catch (error) {
+      return res.status(400).json({ error: 'Unable to edit commentary.' });
     }
-
-    if (commentary.user_id !== userId) {
-      return res.status(401).json({ error: 'Unauthorized!' });
-    }
-
-    commentary
-      .update({ content })
-      .then(() => {
-        return res.json({ message: 'Commentary edited successfully.' });
-      })
-      .catch(() => {
-        return res.status(400).json({ error: 'Unable to edit commentary.' });
-      });
   },
   async delete(req, res) {
     const userId = req.user;
     const { commentId } = req.params;
+    try {
+      const commentary = await Commentary.findByPk(commentId);
 
-    const commentary = await Commentary.findByPk(commentId);
+      if (!commentary) {
+        return res.status(404).json({ error: 'Commentary not found.' });
+      }
 
-    if (!commentary) {
-      return res.status(404).json({ error: 'Commentary not found.' });
+      if (commentary.user_id !== userId) {
+        return res.status(401).json({ error: 'Unauthorized!' });
+      }
+
+      await commentary.destroy();
+      return res.json({ message: 'Commentary deleted successfully.' });
+    } catch (error) {
+      return res.status(400).json({ error: 'Unable to delete commentary.' });
     }
-
-    if (commentary.user_id !== userId) {
-      return res.status(401).json({ error: 'Unauthorized!' });
-    }
-
-    commentary
-      .destroy()
-      .then(() => {
-        return res.json({ message: 'Commentary deleted successfully.' });
-      })
-      .catch(() => {
-        return res.status(400).json({ error: 'Unable to delete commentary.' });
-      });
   },
 };

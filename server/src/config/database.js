@@ -1,6 +1,4 @@
-require('dotenv').config({
-  path: process.env.NODE_ENV === 'test' ? '.env.test' : '.env',
-});
+require('dotenv').config();
 
 module.exports = {
   development: {
@@ -16,7 +14,7 @@ module.exports = {
     },
   },
   test: {
-    storage: './server/__tests__/database.sqlite',
+    storage: './__tests__/database.sqlite',
     dialect: 'sqlite',
     logging: false,
     define: {

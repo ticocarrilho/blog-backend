@@ -5,17 +5,17 @@
   "license": "MIT",
   "scripts": {
     "prestart": "sequelize db:migrate",
-    "start": "node server",
+    "start": "node index",
     "heroku-prebuild": "rm -rf node_modules",
     "build": "cd client && yarn --production=false && yarn run build",
-    "dev": "nodemon server --ignore __tests__",
+    "dev": "NODE_ENV=development nodemon index --ignore __tests__",
     "pretest": "NODE_ENV=test sequelize db:migrate",
     "test": "NODE_ENV=test npm-run-all run-test run-after-test --continue-on-error",
     "run-test": "NODE_ENV=test jest --runInBand",
     "run-after-test": "NODE_ENV=test sequelize db:migrate:undo:all",
     "posttest": "NODE_ENV=test sequelize db:migrate:undo:all"
   },
-   "cacheDirectories": [
+  "cacheDirectories": [
     "node_modules",
     "client/node_modules"
   ],
@@ -37,12 +37,11 @@
     "csurf": "^1.11.0",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
+    "express-validator": "^6.6.1",
     "jsonwebtoken": "^8.5.1",
+    "morgan": "^1.10.0",
     "pg": "^8.3.2",
     "sequelize": "^6.3.4",
     "sequelize-cli": "^6.2.0"
-  },
-  "engines": {
-    "node": "12.x", "yarn": "1.x"
   }
 }
