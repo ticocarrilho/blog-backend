@@ -1,7 +1,9 @@
 const { Post } = require('../models');
 module.exports = {
   async index(req, res) {
-    const posts = await Post.findAll();
+    const posts = await Post.findAll({
+      include: [{ association: 'post_owner', attributes: ['name'] }],
+    });
     return res.json(posts);
   },
   async show(req, res) {
