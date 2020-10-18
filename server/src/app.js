@@ -48,7 +48,7 @@ class AppController {
   }
   routes() {
     if(process.env.NODE_ENV === 'production') {
-      this.express.use(express.static(this.distPath));
+      this.express.use(express.static(this.buildPath));
     }
     this.express.use(require('./routes'));
   }
