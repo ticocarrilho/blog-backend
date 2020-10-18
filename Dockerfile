@@ -8,6 +8,6 @@ FROM node:12 as server
 WORKDIR /server
 COPY /server .
 COPY --from=client /client/build ./build
-RUN yarn i
+RUN yarn
 EXPOSE 3001
 CMD ["yarn", "start"]
