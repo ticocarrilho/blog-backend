@@ -1,5 +1,6 @@
 const { User } = require('../models');
-const jwt = require('jsonwebtoken');
+
+const IS_PROD = process.env.NODE_ENV==='production';
 
 module.exports = {
   async index(req, res) {
@@ -32,10 +33,14 @@ module.exports = {
         return res.status(400).json({ error: 'E-mail already in use' });
       }
       const user = await User.create({ name, email, password, isAdmin: false });
-      const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, {
-        expiresIn: 600,
+      const token = user.generateToken();
+      res.cookie('token', token, {
+        httpOnly: true,
+        signed: true,
+        secure: IS_PROD,
+        sameSite: true,
+        maxAge: 60 * 60 * 1000
       });
-      res.cookie('token', token, { httpOnly: true, signed: true });
       return res.status(201).send();
     } catch (error) {
       return res.status(500).json({ message: 'Server error.' });
@@ -72,12 +77,21 @@ module.exports = {
     const { email, password } = req.body;
     const user = await User.findOne({ where: { email } });
     if (!user || !(await user.checkPassword(password))) {
-      return res.status(401).json({error: [{ msg: 'Wrong e-mail or password.', param: 'wrongEmailOrPwd' }]});
+      return res
+        .status(401)
+        .json({
+          error: [
+            { msg: 'Wrong e-mail or password.', param: 'wrongEmailOrPwd' },
+          ],
+        });
     }
     const token = user.generateToken();
     res.cookie('token', token, {
       httpOnly: true,
       signed: true,
+      secure: IS_PROD,
+      sameSite: true,
+      maxAge: 60 * 60 * 1000
     });
     return res.sendStatus(200);
   },
