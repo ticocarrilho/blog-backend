@@ -1,6 +1,6 @@
 import React from 'react';
 import { Container, makeStyles } from '@material-ui/core';
-import Navbar from '../components/Navbar'
+import Navbar from '../components/Navbar';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -8,16 +8,14 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-function MainPage() {
+const Layout = ({ children }) => {
   const classes = useStyles();
   return (
     <>
-    <Navbar/>
-      <Container className={classes.root}>
-        <p>Teste</p>
-      </Container>
+      <Navbar />
+      <Container className={classes.root}>{children}</Container>
     </>
   );
-}
+};
 
-export default MainPage;
+export default Layout;

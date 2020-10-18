@@ -13,7 +13,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const App = () => {
+const Navbar = () => {
   const classes = useStyles();
 
   return (
@@ -31,4 +31,4 @@ const App = () => {
   );
 };
 
-export default App;
+export default Navbar;

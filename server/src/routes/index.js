@@ -1,17 +1,40 @@
 const express = require('express');
-const UserController = require('./app/controllers/UserController');
-const PostController = require('./app/controllers/PostController');
-const CommentaryController = require('./app/controllers/CommentaryController');
-const { auth, isAdmin } = require('./middleware/auth');
+const UserController = require('../app/controllers/UserController');
+const PostController = require('../app/controllers/PostController');
+const CommentaryController = require('../app/controllers/CommentaryController');
+const { auth, isAdmin } = require('../middleware/auth');
+const {
+  userRequiredFieldsPost,
+  userRequiredFieldsPatch,
+  userLoginRequiredFields,
+  returnValidation,
+} = require('./validations');
 
 const routes = express.Router();
 
 routes.get('/api/user', UserController.index);
 routes.get('/api/user/:userId', UserController.show);
-routes.post('/api/user', UserController.store);
-routes.patch('/api/user/:userId', auth, isAdmin, UserController.update);
+routes.post(
+  '/api/user',
+  userRequiredFieldsPost,
+  returnValidation,
+  UserController.store
+);
+routes.patch(
+  '/api/user/:userId',
+  userRequiredFieldsPatch,
+  returnValidation,
+  auth,
+  isAdmin,
+  UserController.update
+);
 routes.delete('/api/user/:userId', auth, isAdmin, UserController.delete);
-routes.post('/api/user/login', UserController.login);
+routes.post(
+  '/api/user/login',
+  userLoginRequiredFields,
+  returnValidation,
+  UserController.login
+);
 
 routes.get('/api/post', PostController.index);
 routes.get('/api/post/:postId', PostController.show);
@@ -29,7 +52,8 @@ routes.delete(
 );
 
 routes.get('/api/csrf-token', (req, res) => {
-  res.json({ csrfToken: req.csrfToken() });
+  res.cookie('XSRF-TOKEN', req.csrfToken());
+  res.end();
 });
 
 module.exports = routes;

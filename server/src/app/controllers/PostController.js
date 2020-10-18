@@ -6,28 +6,36 @@ module.exports = {
   },
   async show(req, res) {
     const { postId } = req.params;
-    const post = await Post.findByPk(postId, {
-      include: [{ association: 'post_commentary' }],
-    });
-    if (!post) {
-      return res.status(404).json({ message: 'Post not found.' });
+    try {
+      const post = await Post.findByPk(postId, {
+        include: [{ association: 'post_commentary' }],
+      });
+      if (!post) {
+        return res.status(404).json({ message: 'Post not found.' });
+      }
+      return res.json(post);
+    } catch (error) {
+      return res.status(500).json({ message: 'Server error.' });
     }
-    return res.json(post);
   },
   async store(req, res) {
     const userId = req.user;
     const { title, content } = req.body;
-    const post = await Post.create({ title, content, user_id: userId });
-    return res.status(201).json(post);
+    try {
+      const post = await Post.create({ title, content, user_id: userId });
+      return res.status(201).json(post);
+    } catch (error) {
+      return res.status(500).json({ message: 'Server error.' });
+    }
   },
   async update(req, res) {
     const { postId } = req.params;
     const { title, content } = req.body;
-    const post = await Post.findOne({ where: { id: postId } });
-    if (!post) {
-      return res.status(404).json({ error: 'Post not found.' });
-    }
     try {
+      const post = await Post.findOne({ where: { id: postId } });
+      if (!post) {
+        return res.status(404).json({ error: 'Post not found.' });
+      }
       await post.update({ title, content });
       return res.json({ message: 'Post edited successfully.' });
     } catch (error) {
@@ -36,12 +44,12 @@ module.exports = {
   },
   async delete(req, res) {
     const { postId } = req.params;
-    const post = await Post.findOne({ where: { id: postId } });
 
-    if (!post) {
-      return res.status(404).json({ error: 'Post not found.' });
-    }
     try {
+      const post = await Post.findOne({ where: { id: postId } });
+      if (!post) {
+        return res.status(404).json({ error: 'Post not found.' });
+      }
       await post.destroy();
       return res.json({ message: 'Commentary deleted successfully.' });
     } catch (error) {
