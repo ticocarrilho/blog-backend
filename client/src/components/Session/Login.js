@@ -1,30 +1,18 @@
 import React from 'react';
 import { useForm } from 'react-hook-form';
 import FormContainer from './FormContainer';
-import api from '../../services/api';
+import useSubmit from '../../hooks/useSession';
 
 function Login() {
   const { register, handleSubmit, errors, setError, clearErrors } = useForm();
+  const { login } = useSubmit('/user/login', 200, setError);
 
-  const onSubmit = async (data) => {
-    try {
-      await api.post(
-        '/user/login',
-        {
-          email: data.email,
-          password: data.password,
-        },
-        { withCredentials: true }
-      );
-    } catch ({ response }) {
-      const { data } = response;
-      data.error.forEach((error) => {
-        setError(`${error.param}`, {
-          type: 'manual',
-          message: error.msg,
-        });
-      });
-    }
+  const onSubmit = (data) => {
+    login({
+      email: data.email,
+      password: data.password,
+      keepSignIn: data.keepSignIn,
+    });
   };
 
   return (

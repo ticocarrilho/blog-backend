@@ -35,6 +35,8 @@ routes.post(
   returnValidation,
   UserController.login
 );
+routes.get('/api/me', auth, UserController.me);
+routes.post('/api/logout', UserController.logout);
 
 routes.get('/api/post', PostController.index);
 routes.get('/api/post/:postId', PostController.show);

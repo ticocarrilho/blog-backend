@@ -6,20 +6,25 @@ import { useDispatch } from 'react-redux';
 import Layout from './pages/Layout';
 import Login from './components/Session/Login';
 import SignUp from './components/Session/SignUp';
-import PostList from './components/Post/PostsList'
+import PostList from './components/Post/PostsList';
 import theme from './theme';
 import api from './services/api';
 import { fetchPosts } from './slices/postSlice';
+import useSession from './hooks/useSession'
 
 const App = () => {
   const dispatch = useDispatch();
+  
+  useSession();
+
   useEffect(() => {
     const getCsrfToken = async () => {
       await api.get('/csrf-token', { withCredentials: true });
     };
     getCsrfToken();
-    dispatch(fetchPosts())
+    dispatch(fetchPosts());
   }, []);
+  
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />

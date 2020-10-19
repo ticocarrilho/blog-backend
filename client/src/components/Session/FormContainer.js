@@ -100,7 +100,7 @@ function FormContainer({ register, handleSubmit, errors, type, clearErrors }) {
           />
           <FormControlLabel
             inputRef={register()}
-            control={<Checkbox name='checkedB' color='primary' />}
+            control={<Checkbox name='keepSignIn' color='primary' />}
             label='Keep me signed in'
             name='keepSignIn'
           />

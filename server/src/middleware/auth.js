@@ -3,27 +3,37 @@ const { User } = require('../app/models');
 
 module.exports = {
   async auth(req, res, next) {
-    const token = req.signedCookies.token;
-    if (!token) {
-      return res.status(401).json({
-        error: 'Token not provided!',
-      });
-    }
-    let id;
-    jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
-      if (err) {
+    if (req.cookies.session == 1) {
+      const token = req.signedCookies.token;
+      if (!token) {
         return res.status(401).json({
-          error: 'Unauthorized!',
+          error: 'Token not provided!',
         });
       }
-      id = decoded.id;
-    });
-    const user = await User.findByPk(id);
-    if (!user) {
-      return res.status(404).json({ error: 'User does not exists.' });
+      let id;
+      jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
+        if (err) {
+          return res.status(401).json({
+            error: 'Unauthorized!',
+          });
+        }
+        id = decoded.id;
+      });
+      try {
+        const user = await User.findByPk(id);
+        if (!user) {
+          return res.status(404).json({ error: 'User does not exists.' });
+        }
+        req.user = id;
+        return next();
+      } catch (error) {
+        return res.status(500).json({ message: 'Server error.' });
+      }
+    } else {
+      return res.status(401).json({
+        error: 'Unauthorized!',
+      });
     }
-    req.user = id;
-    return next();
   },
   async isAdmin(req, res, next) {
     const userId = req.user;

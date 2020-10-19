@@ -8,9 +8,12 @@ import {
   MenuItem,
 } from '@material-ui/core';
 import { Link } from 'react-router-dom';
+import { useSelector } from 'react-redux';
+import { sessionSelector } from '../slices/sessionSlice';
 import { makeStyles } from '@material-ui/core/styles';
 import MenuIcon from '@material-ui/icons/Menu';
 import AccountCircle from '@material-ui/icons/AccountCircle';
+import useSession from '../hooks/useSession';
 
 const useStyles = makeStyles((theme) => ({
   link: {
@@ -27,6 +30,8 @@ const useStyles = makeStyles((theme) => ({
 
 const Navbar = () => {
   const classes = useStyles();
+  const { session } = useSelector(sessionSelector);
+  const { logout } = useSession();
   const [openMenuEl, setOpenMenuEl] = useState(null);
 
   const handleOpen = (event) => {
@@ -64,12 +69,22 @@ const Navbar = () => {
           }}
           open={Boolean(openMenuEl)}
           onClose={handleClose}>
-          <MenuItem><Link to="/login" className={classes.link}>Login</Link></MenuItem>
-          <MenuItem>
-            <Link to='/signup' className={classes.link}>
-              Sign Up
-            </Link>
-          </MenuItem>
+          {session ? (
+            <MenuItem onClick={logout}>Logout</MenuItem>
+          ) : (
+            [
+              <MenuItem key='login'>
+                <Link to='/login' className={classes.link}>
+                  Login
+                </Link>
+              </MenuItem>,
+              <MenuItem key='signup'>
+                <Link to='/signup' className={classes.link}>
+                  Sign Up
+                </Link>
+              </MenuItem>,
+            ]
+          )}
         </Menu>
       </Toolbar>
     </AppBar>
