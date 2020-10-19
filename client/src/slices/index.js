@@ -1,8 +1,10 @@
 import { combineReducers } from 'redux';
 import postReducer from './postSlice';
+import sessionReducer from './sessionSlice';
 
 const rootReducer = combineReducers({
-    postReducer
+  post: postReducer,
+  session: sessionReducer,
 });
 
-export default rootReducer
+export default rootReducer;

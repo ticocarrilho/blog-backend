@@ -21,7 +21,7 @@ const postSlice = createSlice({
 });
 
 export const { setLoading, getAllPostsSucess } = postSlice.actions;
-export const postSelector = (state) => state;
+export const postSelector = (state) => state.post;
 export default postSlice.reducer;
 
 export const fetchPosts = () => {

@@ -9,7 +9,11 @@ const getAuthCookie = async (email, password, csrf, cookies) => {
       email: email,
       password: password,
     });
-  return cookies + '; ' + cookie.headers['set-cookie'][0].split(';')[0];
+  let newCookie = cookies;
+  cookie.headers['set-cookie'].forEach((cookie) => {
+    newCookie += `; ${cookie}`;
+  });
+  return newCookie;
 };
 
 module.exports = { getAuthCookie };
