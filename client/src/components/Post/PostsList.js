@@ -5,6 +5,7 @@ import { useSelector } from 'react-redux';
 import { useSprings, animated, config } from 'react-spring';
 import { Waypoint } from 'react-waypoint';
 import { postSelector } from '../../slices/postSlice';
+import { sessionSelector } from '../../slices/sessionSlice';
 import PostPreview from './PostPreview';
 import PostInput from './PostInput';
 
@@ -40,9 +41,13 @@ const PostList = () => {
   const AnimatedGrid = animated(Grid);
   return (
     <Grid container direction='column' spacing={3}>
-      <Grid item>
-        <PostInput />
-      </Grid>
+      {session ? (
+        <Grid item>
+          <PostInput />
+        </Grid>
+      ) : (
+        ''
+      )}
       {loading ? (
         <p>Loading</p>
       ) : (
