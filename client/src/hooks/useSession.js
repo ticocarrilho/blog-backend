@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
 import { useCookies } from 'react-cookie';
 import { useDispatch } from 'react-redux';
@@ -10,25 +10,47 @@ const useSession = (route, statusCodeSucess, setError) => {
     'keepSession',
     'session',
   ]);
+  const [validSession, setValidSession] = useState();
   const history = useHistory();
   const dispatch = useDispatch();
 
+  const removeSessionCookie = () => {
+    removeCookie('session');
+  };
+
   useEffect(() => {
+    //!!TODO colocar aqui requisição para verficiar se o token jwt ainda é válido.
+    const verifySession = async () => {
+      try {
+        await api.get('/me');
+        setValidSession(true);
+      } catch (error) {
+        setValidSession(false);
+      }
+    };
+
+    verifySession();
+
     if (cookies.session == 1) {
       dispatch(setSession(true));
     }
-    const removeSession = () => {
-      removeCookie('session');
-    };
+
     if (cookies.keepSession === 'false') {
-      window.addEventListener('beforeunload', removeSession);
+      window.addEventListener('beforeunload', removeSessionCookie);
     } else {
-      window.removeEventListener('beforeunload', removeSession);
+      window.removeEventListener('beforeunload', removeSessionCookie);
     }
     return () => {
-      window.removeEventListener('beforeunload', removeSession);
+      window.removeEventListener('beforeunload', removeSessionCookie);
     };
   }, [cookies.keepSession, cookies.session]);
+
+  useEffect(() => {
+    if (validSession === false) {
+      removeSessionCookie();
+      dispatch(setSession(false));
+    }
+  }, [validSession]);
 
   const login = async (data) => {
     try {

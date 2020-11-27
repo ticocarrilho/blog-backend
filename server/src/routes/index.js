@@ -40,7 +40,7 @@ routes.post('/api/logout', UserController.logout);
 
 routes.get('/api/post', PostController.index);
 routes.get('/api/post/:postId', PostController.show);
-routes.post('/api/post', auth, isAdmin, PostController.store);
+routes.post('/api/post', auth, PostController.store);
 routes.patch('/api/post/:postId', auth, isAdmin, PostController.update);
 routes.delete('/api/post/:postId', auth, isAdmin, PostController.delete);
 

@@ -3,6 +3,7 @@ module.exports = {
   async index(req, res) {
     const posts = await Post.findAll({
       include: [{ association: 'post_owner', attributes: ['name'] }],
+      order: [['id', 'DESC']],
     });
     return res.json(posts);
   },
@@ -27,7 +28,7 @@ module.exports = {
       const post = await Post.create({ title, content, user_id: userId });
       return res.status(201).json(post);
     } catch (error) {
-      return res.status(500).json({ message: 'Server error.' });
+      return res.status(500).json({ error, message: 'Server error.' });
     }
   },
   async update(req, res) {

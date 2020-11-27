@@ -19,7 +19,9 @@
     "react-hooks-form": "^2.0.1",
     "react-redux": "^7.2.1",
     "react-router-dom": "^5.2.0",
-    "react-scripts": "3.4.3"
+    "react-scripts": "3.4.3",
+    "react-spring": "^8.0.27",
+    "react-waypoint": "^9.0.3"
   },
   "scripts": {
     "start": "react-scripts start",

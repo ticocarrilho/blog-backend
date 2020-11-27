@@ -17,10 +17,13 @@ const postSlice = createSlice({
       state.posts = payload;
       state.loading = false;
     },
+    addPost: (state, { payload }) => {
+      state.posts = [...state.posts, payload]
+    }
   },
 });
 
-export const { setLoading, getAllPostsSucess } = postSlice.actions;
+export const { setLoading, getAllPostsSucess, addPost } = postSlice.actions;
 export const postSelector = (state) => state.post;
 export default postSlice.reducer;
 
